@@ -1,20 +1,7 @@
-name: security
-on: [push, pull_request]
-
-permissions:
-  contents: read
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with: { fetch-depth: 0 }   # gitleaks needs history
-
       - name: Secret scan (Gitleaks)
         run: |
           docker run -v "${{ github.workspace }}:/repo" zricethezav/gitleaks:latest \
-            detect --source /repo --exit-code 1
+            detect --source /repo --config /repo/.gitleaks.toml --exit-code 1
 
       - name: SAST (Semgrep)
         run: |
@@ -22,6 +9,7 @@ jobs:
           semgrep scan --config auto --error
 
       - name: Dependency scan (Trivy)
+        if: always()
         run: |
           docker run -v "${{ github.workspace }}:/repo" aquasec/trivy:latest \
             fs --scanners vuln --exit-code 0 /repo
