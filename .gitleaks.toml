@@ -1,0 +1,7 @@
+title = "custom"
+
+[[rules]]
+id = "aws-access-key-custom"
+description = "AWS Access Key ID (custom rule, no EXAMPLE allowlist)"
+regex = '''\b(AKIA[0-9A-Z]{16})\b'''
+tags = ["key", "AWS"]
